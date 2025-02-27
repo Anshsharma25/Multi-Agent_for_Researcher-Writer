@@ -1,38 +1,42 @@
 from crewai import Agent
+from tools import tool
 from dotenv import load_dotenv
-load_dotenv()
-import os 
+import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-#calling the gemini model
-llm = ChatGoogleGenerativeAI(os.getenv("GOOGLE_API_KEY"), model = "",verbose = True, temperature = 0.5)
+# Load environment variables
+load_dotenv()
 
-#create a new agent for researcher with memroy and venbose 
+# Initialize Gemini model
+llm = ChatGoogleGenerativeAI(
+    model="gemini-1.5-flash",
+    google_api_key=os.getenv("GOOGLE_API_KEY"),
+    verbose=True,
+    temperature=0.5
+)
 
-new_research = Agents(
-    role = "researcher",
-    goal = "uncovering ground breaking technolgies in {topic}",
-    backstory =(
-        "Driven by cursoity and the desire to uncover the next big thing in {topic},"
-        "I am on a mission to find the most innovative technologies and ideas that will shape the future."
-    )
-    tools= [],
+# Researcher Agent
+new_research = Agent(
+    role="Researcher",
+    goal="Uncover groundbreaking technologies in {topic}.",
+    backstory="Driven by curiosity and the desire to uncover the next big thing in {topic}, "
+              "I am on a mission to find the most innovative technologies and ideas that will shape the future.",
+    tools=[tool],
     llm=llm,
-    allow_delegation = True,
-    memory = True, 
-    verbose = True)
+    allow_delegation=True,
+    memory=True,
+    verbose=True
+)
 
-#creating a writer agent for custom tools in responsible in news writing 
-
+# Writer Agent
 new_writer = Agent(
-    role = "writer",
-    goal = "Narrotor compelling tech stories about {topic}",
-    backstory =(
-        "As a writer, I am passionate about telling stories that captivate and inspire. "
-        "I am on a mission to uncover the latest tech trends and share them with the world through engaging articles."
-    )
-    tools= [],
+    role="Writer",
+    goal="Narrate compelling tech stories about {topic}.",
+    backstory="As a writer, I am passionate about telling stories that captivate and inspire. "
+              "I am on a mission to uncover the latest tech trends and share them with the world through engaging articles.",
+    tools=[tool],
     llm=llm,
-    allow_delegation = False,
-    memory = True, 
-    verbose = True)
+    allow_delegation=False,
+    memory=True,
+    verbose=True
+)
